@@ -1,4 +1,4 @@
-use std::fs::File;
+use std::{fs::File, path::PathBuf};
 
 use crate::rgba::Rgba;
 use std::io::Write;
@@ -13,8 +13,8 @@ impl Ascii {
         clippy::cast_sign_loss,
         clippy::cast_lossless
     )]
-    pub fn write(img: &photon_rs::PhotonImage) {
-        let mut file = File::create("pixel_data.txt").expect("File should open");
+    pub fn write(img: &photon_rs::PhotonImage, path: &PathBuf) {
+        let mut file = File::create(path).expect("File should open");
 
         let pixels = img
             .get_raw_pixels()

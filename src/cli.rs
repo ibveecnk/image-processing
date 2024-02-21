@@ -26,6 +26,8 @@ pub enum ProcessingType {
     Contrast,
     /// Ascii Processing
     Ascii,
+    /// Convolution Processing
+    Convolution,
 }
 
 impl FromStr for ProcessingType {
@@ -36,8 +38,9 @@ impl FromStr for ProcessingType {
         match s {
             "contrast" => Ok(Self::Contrast),
             "ascii" => Ok(Self::Ascii),
+            "convolution" => Ok(Self::Convolution),
             _ => {
-                let possible_values = ["contrast, ascii"];
+                let possible_values = ["contrast", "ascii", "convolution"];
                 let err = format!("\npossible types are: [{}]", possible_values.join(", "));
                 Err(err)
             }
@@ -50,6 +53,7 @@ impl Display for ProcessingType {
         match self {
             Self::Contrast => write!(f, "contrast"),
             Self::Ascii => write!(f, "ascii"),
+            Self::Convolution => write!(f, "convolution"),
         }
     }
 }
@@ -68,9 +72,20 @@ fn validate_args(args: &Args) {
     }
 }
 
+/// Ensure that the input path is an absolute path
+fn ensure_absolute_path(args: &mut Args) {
+    if !args.input.is_absolute() {
+        args.input = std::env::current_dir()
+            .expect("Current directory should exist")
+            .join(&args.input);
+    }
+}
+
 /// Parse CLI arguments and validate them
 pub fn parse_args() -> Args {
-    let args = Args::parse();
+    let mut args = Args::parse();
+    ensure_absolute_path(&mut args);
     validate_args(&args);
+    dbg!(&args);
     args
 }

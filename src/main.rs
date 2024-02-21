@@ -8,7 +8,7 @@ use std::path::PathBuf;
 
 use crate::{
     cli::{Args, ProcessingType},
-    processors::{ascii, contrast, processor::Processor},
+    processors::{ascii, contrast, convolution, processor::Processor},
 };
 
 /// CLI arguments
@@ -32,9 +32,15 @@ fn change_file_name<'a>(path: &'a mut PathBuf, name: &'a str) -> &'a mut PathBuf
     path
 }
 
+/// Change the extension of a `PathBuf`
+fn change_extension<'a>(path: &'a mut PathBuf, ext: &'a str) -> &'a mut PathBuf {
+    path.set_extension(ext);
+    path
+}
+
 #[allow(clippy::print_stdout, clippy::print_stderr)]
 fn main() {
-    let args: Args = cli::parse_args();
+    let mut args: Args = cli::parse_args();
 
     let img = open_image(&args.input.to_string_lossy());
 
@@ -51,9 +57,11 @@ fn main() {
     let processed_image: Option<PhotonImage> = match args.processing_type {
         ProcessingType::Contrast => Some(contrast::Contrast.process(&img)),
         ProcessingType::Ascii => {
-            ascii::Ascii::write(&img);
+            let modified_path = change_extension(change_file_name(&mut args.input, "ascii"), "txt");
+            ascii::Ascii::write(&img, modified_path);
             None
         }
+        ProcessingType::Convolution => Some(convolution::Convolution.process(&img)),
     };
 
     if processed_image.is_none() {

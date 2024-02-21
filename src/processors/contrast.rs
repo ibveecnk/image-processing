@@ -50,9 +50,6 @@ impl Processor for Contrast {
             }
         }
 
-        dbg!(width * height);
-        dbg!(pixels.len());
-
         PhotonImage::new(vec_to_u8_slice(&pixels), width as u32, height as u32)
     }
 }
