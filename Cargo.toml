@@ -1,0 +1,35 @@
+[package]
+name = "image-processing"
+version = "0.1.0"
+edition = "2021"
+
+[profile.release]
+opt-level = "s"
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = "symbols"
+
+[dependencies]
+clap = { version = "4.5.1", features = ["derive"] }
+photon-rs = "0.3.2"
+
+[lints.rust]
+unsafe_code = "forbid"
+macro_expanded_macro_exports_accessed_by_absolute_paths = "allow" # needed for ambassador to work
+
+[lints.clippy]
+pedantic = "deny"
+correctness = "deny"
+suspicious = "warn"
+complexity = "warn"
+style = "warn"
+nursery = "deny"
+missing_docs_in_private_items = "deny"
+unwrap_used = "deny"
+missing_const_for_fn = "deny"
+print_stdout = "deny"
+print_stderr = "deny"
+enum_glob_use = "deny"
+match-wild-err-arm = "warn"
+significant_drop_in_scrutinee = "warn"
